@@ -42,7 +42,6 @@ router.post('/uploadfiles',(req,res) => {
 //=================================
 //             Thumbnail
 //=================================
-
 //비디오 파일 썸네일 생성
 router.post('/thumbnail',(req,res) => {
     //썸네일 생성 하고 비디오 러닝 타임 가져오기
@@ -83,7 +82,5 @@ router.post('/thumbnail',(req,res) => {
         filename: 'thumbnail-%b.png'
     })
 })
-
-
 
 module.exports = router;
