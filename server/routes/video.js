@@ -3,15 +3,18 @@ const router = express.Router();
 const { auth } = require("../middleware/auth");
 //const { Video } = require("../models/Video");
 const multer = require("multer");
+var ffmpeg = require("fluent-ffmpeg");
 
-
+//=================================
+//             Video
+//=================================
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/");
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}_${file.originalname}`);
-
+        
     },
     fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname);
@@ -24,9 +27,8 @@ let storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage }).single("file");
-//=================================
-//             Video
-//=================================
+
+//비디오 파일 경로에 저장
 router.post('/uploadfiles',(req,res) => {
     //비디오를 서버에 저장한다.
     upload(req, res, err => {
@@ -36,6 +38,52 @@ router.post('/uploadfiles',(req,res) => {
         return res.json({ success : true, url: res.req.file.path, fileName: res.req.file.filename})
     })
 })
+
+//=================================
+//             Thumbnail
+//=================================
+
+//비디오 파일 썸네일 생성
+router.post('/thumbnail',(req,res) => {
+    //썸네일 생성 하고 비디오 러닝 타임 가져오기
+
+    //파일 경로 , 길이 변수 설정
+    let filePath = "";
+    let fileDuration = "";
+
+    //비디오 정보 가져오기
+    ffmpeg.ffprobe(req.body.url, function(err, metadata){
+        console.log(metadata);
+        console.log(metadata.format.duration);
+        fileDuration = metadata.format.duration;
+    });
+
+    //썸네일 생성
+    ffmpeg(req.body.url)
+    .on('filenames', function(filenames){
+        console.log("will generate " + filenames.join(', '))
+        console.log(filenames)
+
+        filePath = "uploads/thumbnails/"+filenames[0]
+    })
+    .on('end', function(){
+        console.log("Screenshots taken");
+        return res.json({success:true, url: filePath, fileDuration: fileDuration})
+    })
+    .on('error', function(err){
+        console.log(err)
+        return res.json({success:false, err});
+    })
+    //스크린샷 옵션 3개의 스크린 샷을 찍고 저장경로, 파일이름, 크기 설정
+    .screenshots({
+        count: 3,
+        folder: 'uploads/thumbnails',
+        size: "320x240",
+        //'%b' : input basename (filename w/o extension)
+        filename: 'thumbnail-%b.png'
+    })
+})
+
 
 
 module.exports = router;

@@ -27,6 +27,10 @@ import Axios from 'axios';
      const [Private, setPrivate] = useState(0)
      const [Category, setCategory] = useState("Film & Animation")
 
+     const [FilePath, setFilePath] = useState("")
+     const [Duration, setDuration] = useState("")
+     const [ThumbnailPath, setThumbnailPath] = useState("")
+
      const onVideoTitleChange = (e) => {
         // e 는 이벤트를 지칭 한다.
         //console.log(e.currentTarget.value)
@@ -54,13 +58,35 @@ import Axios from 'axios';
         Axios.post('/api/video/uploadfiles', formData, config)
             .then(response => {
                 if(response.data.success){
+                    //성공
                     console.log(response.data)
+
+                    let variable = {
+                        url : response.data.url,
+                        fileName : response.data.fileName
+                    }
+
+                    setFilePath(response.data.url)
+
+                    //썸네일 생성
+                    Axios.post('/api/video/thumbnail', variable)
+                        .then(response => {
+                            if(response.data.success){
+                                console.log(response.data);
+                                setDuration(response.data.fileDuration)
+                                setThumbnailPath(response.data.url)
+                            }
+                            else{
+                                alert("썸네일 생성에 실패 했습니다.");
+                            }
+                        })
                 }
                 else{
                     alert('비디오 업로드에 실패 했습니다.')
                 }
             })
     }
+    //화면 구성
      return (
          <div style={{ maxWidth:'700px', margin:'2rem auto'}}>
              <div style={{ textAlign:'center', marginBottom:'2rem' }}>
@@ -84,10 +110,13 @@ import Axios from 'axios';
                                 )
                             }
                         </Dropzone>
-                    {/* Thumbnail */}
+                    {/* Thumbnail.. 랜더링 사이트에서 만약 스크립트 코드가 들어 갈경우 이렇게 중괄호로 묶으면 된다.*/}
+                    {/* 다음과 같은 조건이다 : ThumbnailPath의 값이 있는경우 아래의 화면을 랜더링 하라는 뜻이다.*/
+                    ThumbnailPath &&
                     <div>
-                        <img src alt />
+                        <img src={`http://localhost:5000/${ThumbnailPath}`} alt="thumbnail" />
                     </div>
+                    }
                  </div>
                 <br/>
                 <br/>
