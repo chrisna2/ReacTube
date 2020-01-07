@@ -98,4 +98,22 @@ router.post('/uploadVideo',(req,res) => {
     })
 })
 
+//=================================
+//             videoList
+//=================================
+router.get('/getVideos',(req,res) => {
+    //비디오를 DB에서 가져와서 클라이언트에 보낸다.
+    Video.find()
+        //아래 것을 해줘야 모든 DB 정보를 가져온다.
+        .populate('writer')
+        .exec((err, video) => {
+            if(err){
+                return res.status(400).send(err);
+            }
+            res.status(200).json({success:true, video})
+        })
+
+})
+
+
 module.exports = router;
