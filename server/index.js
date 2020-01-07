@@ -25,7 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+//여기서 라우터 경로를 간소화 설정해서 각각에 라우터 경로로 보내준다.
 app.use('/api/users', require('./routes/users'));
+app.use('/api/video', require('./routes/video'));
 
 
 //use this to show the image you have in node js server to client (react js)
