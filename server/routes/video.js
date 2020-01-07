@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { auth } = require("../middleware/auth");
-//const { Video } = require("../models/Video");
+const { Video } = require("../models/Video");//server > models > Video
 const multer = require("multer");
 var ffmpeg = require("fluent-ffmpeg");
 
@@ -80,6 +80,21 @@ router.post('/thumbnail',(req,res) => {
         size: "320x240",
         //'%b' : input basename (filename w/o extension)
         filename: 'thumbnail-%b.png'
+    })
+})
+
+//=================================
+//             uploadVideo
+//=================================
+router.post('/uploadVideo',(req,res) => {
+    //비디오 정보 DB 저장
+    const video = new Video(req.body)
+
+    video.save((err,doc) => {
+        if(err){
+            return res.json({success:false, err})
+        }
+        res.status(200).json({success: true})
     })
 })
 

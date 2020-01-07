@@ -1,7 +1,9 @@
  import React, {useState} from 'react'
  import { Typography, Button, Form, message, Input, Icon} from 'antd'
  import Dropzone from 'react-dropzone'
-import Axios from 'axios';
+ import Axios from 'axios';
+ import {useSelector} from 'react-redux';
+
 
  const { Title } = Typography;
  const { TextArea } = Input;
@@ -19,7 +21,11 @@ import Axios from 'axios';
      {value : 5 , label:"코메디"},
  ]
 
- function VideoUploadPage() {
+ function VideoUploadPage(props) {
+
+    //유저 정보 설정 
+    const user = useSelector(state => state.user);
+
     //ctrl + space + "useState"
      const [VideoTitle, setVideoTitle] = useState("")
      const [VideoDescription, setVideoDescription] = useState("")
@@ -40,14 +46,17 @@ import Axios from 'axios';
      const onVideoDescriptionChange = (e) => {
         setVideoDescription(e.currentTarget.value)
      }
+
      const onPrivateChage = (e) => {
          console.log(e.currentTarget.value)
         setPrivate(e.currentTarget.value)
      }
+
      const onCategoryChage = (e) => {
          console.log(e.currentTarget.value)
         setCategory(e.currentTarget.value)
      }
+
      const onDrop = (files) => {
         let formData = new FormData;
         const config = {
@@ -86,13 +95,48 @@ import Axios from 'axios';
                 }
             })
     }
+    //일반화된 함수 형태 참고!
+    const onSubmit = (e) =>{
+        //뭔가를 방지 한다고 한다. 필수
+        e.preventDefault();
+
+        const variable = {
+            writer : user.userData._id,
+            title : VideoTitle,
+            description : VideoDescription,
+            privacy : Private,
+            filePath : FilePath,
+            category : Category,
+            duration : Duration,
+            thumbnail : ThumbnailPath
+        }
+
+        Axios.post('/api/video/uploadVideo', variable)
+            .then(res => {
+                if(res.data.success){
+                    console.log(res.data);
+                    message.success('성공적으로 업로드 했습니다');
+                    //3초 후에 라우트 이동
+                    setTimeout(() => {
+                        props.history.push('/')
+                    }, 3000)
+                    
+                }
+                else{
+                    alert("비디오 업로드에 실패 했습니다.")
+                }
+            })
+
+    }
+    // on submit 구성
+
     //화면 구성
      return (
          <div style={{ maxWidth:'700px', margin:'2rem auto'}}>
              <div style={{ textAlign:'center', marginBottom:'2rem' }}>
                  <Title level={2}>비디오 업로드</Title>
              </div>
-             <Form onSubmit>
+             <Form onSubmit={onSubmit}>
                  <div style={{ display:'flex', justifyContent:'space-between' }}>
                     {/* Drop zone */}
                         <Dropzone
@@ -110,7 +154,7 @@ import Axios from 'axios';
                                 )
                             }
                         </Dropzone>
-                    {/* Thumbnail.. 랜더링 사이트에서 만약 스크립트 코드가 들어 갈경우 이렇게 중괄호로 묶으면 된다.*/}
+                    {/* Thumbnail.. 랜더링 사이트에서 만약 스크립트 코드가 들어 갈경우 이렇게 중괄호{}로 묶으면 된다.*/}
                     {/* 다음과 같은 조건이다 : ThumbnailPath의 값이 있는경우 아래의 화면을 랜더링 하라는 뜻이다.*/
                     ThumbnailPath &&
                     <div>
@@ -157,7 +201,7 @@ import Axios from 'axios';
                 <br/>
                 <br/>
 
-                <Button type="primary" size="large" onClick>
+                <Button type="primary" size="large" onClick={onSubmit}>
                     업로드
                 </Button>
 
