@@ -163,7 +163,6 @@ router.post('/getVideos',(req,res) => {
             }
             res.status(200).json({success:true, video})
         })
-
 })
 
 
@@ -181,7 +180,6 @@ router.post('/getVideoDetail',(req,res) => {
             }
             res.status(200).json({success:true, videoDetail})
         })
-
 })
 
 module.exports = router;
