@@ -57,7 +57,7 @@ function LandingPage() {
 
     return (
         <div style={{width:'85%', margin:'3rem auto'}}>
-            <Title level={3}>지금 뜨는 영상!</Title>
+            <Title level={3}>맞춤 동영상</Title>
             <hr/>
             <Row gutter={[32,16]}>
                 {renderCards} 
