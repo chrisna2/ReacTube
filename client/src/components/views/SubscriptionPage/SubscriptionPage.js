@@ -10,14 +10,23 @@ const { Meta } = Card;
 
 function SubscriptionPage() {
 
-    const [Video, setVideo] = useState([]);
+    const [SubscribeVideo, setSubscribeVideo] = useState([]);
 
     useEffect(() => {
-        Axios.get('/api/video/getVideos')
+
+        const subscribeVariable = {
+            userFrom : localStorage.getItem('userId')
+        }
+
+        //console.log(localStorage.getItem('userId'))
+
+        //변수를 집어 넣을 경우 url에 파라미터를 집어 넣지 않고 json데이터를 전송할때는 
+        //반드시 post 형식에 데이터를 전송해야한다. 상식임
+        Axios.post('/api/video/getSubscribeVideos', subscribeVariable)
             .then(res => {
                 if(res.data.success){
                     console.log(res.data)
-                    setVideo(res.data.video);
+                    setSubscribeVideo(res.data.video);
                 }
                 else{
                     alert('비디오 가져오기에 실패했습니다.')
@@ -25,7 +34,7 @@ function SubscriptionPage() {
             })
     }, [])
 
-    const renderCards = Video.map((video, index) => {
+    const renderCards = SubscribeVideo.map((video, index) => {
 
         var minutes = Math.floor(video.duration/60)
         var seconds = Math.floor(video.duration - (minutes*60))

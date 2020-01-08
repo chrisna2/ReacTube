@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { auth } = require("../middleware/auth");
 const { Video } = require("../models/Video");//server > models > Video
+const { Subscriber } = require("../models/Subscriber");//server > models > Subscriber
 const multer = require("multer");
 var ffmpeg = require("fluent-ffmpeg");
 
@@ -114,6 +115,39 @@ router.get('/getVideos',(req,res) => {
         })
 
 })
+
+//=================================
+//        SubscribeVideosList
+//=================================
+router.post('/getSubscribeVideos',(req,res) => {
+    //console.log(req.body.userFrom)
+    //자신의 아이디를 가지고 구독하는 사람들을 찾는다.
+    Subscriber.find({'userFrom' : req.body.userFrom})
+            .exec((err,subinfo) => {
+
+                if(err){
+                    return res.status(400).send(err);
+                }
+                //console.log(subinfo)
+                let subinfoArray = [];
+                subinfo.map((subscriber, idx) => {
+                    subinfoArray.push(subscriber.userTo);
+                });
+                //console.log(subinfoArray)
+                // 찾은 사람들의 비디오를 가져온다! in 사용가능!
+                // $in 해당 배열에 포함되는 정보를 가져온다.
+                Video.find({writer : {$in : subinfoArray}})
+                    .populate('writer')
+                    .exec((err, video)=>{
+                        if(err) {
+                            return res.status(400).send(err);
+                        }
+                        res.status(200).json({success:true, video})
+                    })
+ 
+            });
+})
+
 
 //=================================
 //             videoList
