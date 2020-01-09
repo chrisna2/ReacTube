@@ -74,15 +74,24 @@ function Subscribe(props) {
         }
     }
 
-    return (
-        <div>
-            <button style={{backgroundColor:`${Subscribed ? '#AAAAAA' : '#CC0000'}`, borderRadius:'4px', color:'white', padding:'10px 16px',
-                            fontWeight:'500', fontSize:'1rem', textTransform:'uppercase'}}
-                    onClick={onSubscribe}>
-             {Subscribed ? SubscribeNumber+'명 구독중' : '구독자 '+SubscribeNumber+"명"}
-            </button>
-        </div>
-    )
+    if(props.userTo === localStorage.getItem("userId")){
+        return(
+            <div>
+                구독자 {SubscribeNumber} 명
+            </div>
+        )
+    }
+    else{
+        return (
+            <div>
+                <button style={{backgroundColor:`${Subscribed ? '#AAAAAA' : '#CC0000'}`, borderRadius:'4px', color:'white', padding:'10px 16px',
+                                fontWeight:'500', fontSize:'1rem', textTransform:'uppercase'}}
+                        onClick={onSubscribe}>
+                {Subscribed ? SubscribeNumber+'명 구독중' : '구독자 '+SubscribeNumber+"명"}
+                </button>
+            </div>
+        )
+    }
 }
 
 export default Subscribe

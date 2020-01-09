@@ -3,6 +3,7 @@ import { Row, Col, List, Avatar} from 'antd';
 import Axios from 'axios';
 import SideVideo from './Section/SideVideo.js';
 import Subscribe from './Section/Subscribe.js';
+import Comment from './Section/Comment.js';
 
 function VideoDetailPage(props) {
     
@@ -28,7 +29,6 @@ function VideoDetailPage(props) {
    //화면 구성
     //writer 정보가 있는경우
     if(VideoDetail.writer){
-
         return (
             <Row gutter={[16,16]}>
                 <Col lg={18} md={24}>
@@ -43,6 +43,7 @@ function VideoDetailPage(props) {
                             </List.Item.Meta>
                         </List.Item>
                         {/* comment 섹션 */}
+                        <Comment videoId={videoId} />
                     </div>
                 </Col>
                 {/*side video 섹션 */}
