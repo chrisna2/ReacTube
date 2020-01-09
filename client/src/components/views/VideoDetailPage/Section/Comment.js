@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import Axios from 'axios';
 import {useSelector} from 'react-redux';
+import SingleComment from './SingleComment'
 
 //=========================
 // 코맨트 wrapper.js 
@@ -29,7 +30,10 @@ function Comment(props) {
         Axios.post('/api/comment/saveComment', variables)
             .then(response => {
                 if(response.data.success){
-                    console.log(response.data)
+                    console.log(response.data.result)
+                    //부모 3스택에 이어지는 prop function
+                    props.refreshComment(response.data.result)
+                    setCommentValue("")
                 }
                 else{
                     alert('댓글을 저장 하지 못했습니다.')
@@ -43,8 +47,12 @@ function Comment(props) {
         <div>
             <p>댓글</p><hr/>
             {/* 댓글 리스트 */}
-
-            {/* 1단계 댓글 형태 폼 */}
+            {props.comments && props.comments.map((comments, idx) => (
+                (!comments.responseTo &&
+                    <SingleComment videoId={props.videoId} comments={comments} key={idx} refreshComment={props.refreshComment}/>
+                )
+            ))}
+            {/* 1단계 댓글 입력 형태 폼 */}
             <form style={{display:'flex'}} onSubmit={onSubmit}>
                 <textarea
                     style={{width:'100%',borderRadius:'5px'}}

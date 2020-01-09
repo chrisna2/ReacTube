@@ -25,5 +25,21 @@ router.post('/saveComment',(req,res) => {
             })
     })
 })
+//=================================
+//       댓글 목록 조회
+//=================================
+router.post("/getCommentList", (req,res) => {
+    console.log("★"+req.body.videoId)
+    Comment
+        .find({'videoId':req.body.videoId})
+        .populate("writer")
+        .exec((err, comments) => {
+            if(err){
+                return res.status(400).json({success:false, err});
+            }
+            res.status(200).json({success:true, comments})
+    })
+})
+
 
 module.exports = router;
