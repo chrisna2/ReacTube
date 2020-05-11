@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Comment } = require("../models/Comment");//server > models > Video
+const { Comment } = require("../models/Comment");// server > models > Video
+
+// 라우터.js 를 통해 db와 접속하여 데이터를 가져온다.
 
 //=================================
 //       댓글 등록
@@ -26,7 +28,7 @@ router.post('/saveComment',(req,res) => {
     })
 })
 //=================================
-//       댓글 목록 조회
+//       댓글 목록 조회 
 //=================================
 router.post("/getCommentList", (req,res) => {
     console.log("★"+req.body.videoId)

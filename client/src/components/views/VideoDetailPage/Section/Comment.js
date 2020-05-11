@@ -1,12 +1,14 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import Axios from 'axios';
 import {useSelector} from 'react-redux';
-import SingleComment from './SingleComment'
+import SingleComment from './SingleComment';
+import ReplyComment from './ReplyComment';
 
 //=========================
 // 코맨트 wrapper.js 
 //=========================
 function Comment(props) {
+    //props : 해당 코맨트 컴포넌트를 설정한 화면에서 가져온 property value 값들.
 
     const [CommentValue, setCommentValue] = useState("");
 
@@ -21,12 +23,15 @@ function Comment(props) {
         event.preventDefault();
 
         const variables = {
+            //해당 데이터는 화면 컴포넌트 설정 값
             content: CommentValue,
             //redux에서 유저 데이터 가져오기 (localStorage 대용) : 기존 세션의 역활 수행
             writer: userInfo.userData._id,
+            //
             videoId: props.videoId 
         }
         
+        //json 통신 
         Axios.post('/api/comment/saveComment', variables)
             .then(response => {
                 if(response.data.success){
@@ -46,14 +51,8 @@ function Comment(props) {
     return (
         <div>
             <p>댓글</p><hr/>
-            {/* 댓글 리스트 */}
-            {props.comments && props.comments.map((comments, idx) => (
-                (!comments.responseTo &&
-                    <SingleComment videoId={props.videoId} comments={comments} key={idx} refreshComment={props.refreshComment}/>
-                )
-            ))}
             {/* 1단계 댓글 입력 형태 폼 */}
-            <form style={{display:'flex'}} onSubmit={onSubmit}>
+                        <form style={{display:'flex', padding:'3px'}} onSubmit={onSubmit}>
                 <textarea
                     style={{width:'100%',borderRadius:'5px'}}
                     onChange={handleChange}
@@ -62,9 +61,18 @@ function Comment(props) {
                 />
                 <br/>
                 <button style={{height:'52px', width:'150px'}} onClick={onSubmit}>
-                    등록
+                    댓글등록
                 </button>
             </form>
+            {/* 댓글 리스트 */}
+            {props.comments && props.comments.map((comment, idx) => (
+                (!comment.responseTo &&
+                    <React.Fragment>
+                        <SingleComment videoId={props.videoId} singleComment={comment} refreshComment={props.refreshComment}/>
+                        <ReplyComment commentLists={props.comments} parentCommentId={comment._id} videoId={props.videoId} refreshComment={props.refreshComment}/>
+                    </React.Fragment>
+                )
+            ))}
         </div>
     )
 }

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Subscriber } = require("../models/Subscriber");//server > models > Video
 //=================================
-//             subscribe get Number
+//        subscribe get Number
 //=================================
 router.post('/subscribeNumber',(req,res) => {
     //비디오를 DB에서 가져와서 클라이언트에 보낸다.
