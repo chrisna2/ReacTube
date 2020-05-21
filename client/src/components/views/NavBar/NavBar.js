@@ -18,7 +18,9 @@ function NavBar() {
   return (
     <nav className="menu" style={{ position: 'fixed', zIndex: 5, width: '100%' }}>
       <div className="menu__logo">
-        <a href="/">Logo</a>
+        <a href="/">
+            <img style={{width:'60%', height:'60%'}} src={process.env.PUBLIC_URL + '/logo2.jpg'} alt="logo"/>       
+        </a>
       </div>
       <div className="menu__container">
         <div className="menu_left">

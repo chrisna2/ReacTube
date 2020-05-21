@@ -12,11 +12,13 @@ function LikeDislike(props) {
 
     let variable = {}
 
+    console.log(props.userId);
+
     if(props.video){
         variable = { videoId: props.videoId, userId: props.userId}
     }
     else{
-        variable = { commentId: props.commentId , userId: props.userId}
+        variable = { commentId: props.commentId, userId: props.userId}
     }
 
     useEffect(() => {
@@ -26,6 +28,8 @@ function LikeDislike(props) {
                 if(response.data.success){
                     // 얼마나 많은 좋아요를 받았는지
                     setLikeNumber(response.data.likes.length);
+                    
+                    console.log(response.data)
 
                     // 내가 좋아요를 눌렀는지
                     response.data.likes.map(like => {
@@ -42,7 +46,7 @@ function LikeDislike(props) {
 
         //싫어요 조회
         Axios.post('/api/like/getDislikes', variable)
-            .then(response => {
+             .then(response => {
                 if(response.data.success){
                      // 얼마나 많은 좋아요를 받았는지
                      setDislikeNumber(response.data.dislikes.length);
@@ -59,6 +63,9 @@ function LikeDislike(props) {
                     alert("Dislike 정보를 가져오지 못했습니다.")
                 }
             })
+
+        console.log("LikeAction ->"+LikeAction);
+        console.log("DislikeAction ->"+DislikeAction);
     }, [])
 
     // 좋아요 클릭
@@ -68,7 +75,13 @@ function LikeDislike(props) {
             Axios.post('/api/like/upLikes', variable)
                 .then(response => {
                     if(response.data.success){
-                        setLikeAction('liked')
+                        setLikeNumber(LikeNumber+1);
+                        setLikeAction('liked');
+                        
+                        if(DislikeAction !== null){
+                            setDislikeAction(null);
+                            setDislikeNumber(DislikeNumber-1);
+                        }
                     }
                     else{
                         alert("Like 처리에 실패 했습니다.")
@@ -79,15 +92,15 @@ function LikeDislike(props) {
             Axios.post('/api/like/unLikes', variable)
                 .then(response => {
                     if(response.data.success){
+                        setLikeNumber(LikeNumber-1);
                         setLikeAction(null)
                     }
                     else{
-                        alert("Like 처리에 실패 했습니다.")
+                        alert("Like 내리지 못했습니다.")
                     }
                 })
         }
     }
-
     // 싫어요 클릭
     const onDislike = () => {
 
@@ -95,7 +108,13 @@ function LikeDislike(props) {
             Axios.post('/api/like/upDislikes', variable)
                 .then(response => {
                     if(response.data.success){
+                        setDislikeNumber(DislikeNumber+1);
                         setDislikeAction('disliked')
+                        
+                        if(LikeAction !== null){
+                            setLikeAction(null);
+                            setLikeNumber(LikeNumber-1);
+                        }
                     }
                     else{
                         alert("dislike 처리에 실패 했습니다.")
@@ -106,7 +125,8 @@ function LikeDislike(props) {
             Axios.post('/api/like/unDislikes', variable)
                 .then(response => {
                     if(response.data.success){
-                        setLikeAction(null)
+                        setDislikeAction(null);
+                        setDislikeNumber(DislikeNumber-1);
                     }
                     else{
                         alert("dislike 처리에 실패 했습니다.")
@@ -117,7 +137,7 @@ function LikeDislike(props) {
 
     return (
         <div>
-            <span key="coment-basic-like">
+            <span key="comment-basic-like">
                 <Tooltip title="Like">
                     <Icon type="like"
                         theme={LikeAction === 'liked' ? "filled" : "outlined"}
@@ -126,7 +146,7 @@ function LikeDislike(props) {
                 <span styl={{panddingLeft:'8px', cursor:'auto'}}>{LikeNumber}</span>
             </span>
             &nbsp;
-            <span key="coment-basic-dislike">
+            <span key="comment-basic-dislike">
                 <Tooltip title="Dislike">
                     <Icon type="dislike"
                         theme={DislikeAction === 'disliked' ? "filled" : "outlined"}

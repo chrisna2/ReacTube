@@ -46,12 +46,9 @@ function SingleComment(props) {
             }
         })
     }
-
-    
     
     const actions = [<LikeDislike comment commentId={props.singleComment._id} userId={localStorage.getItem("userId")}/>, 
-                     <span onClick={onClickOpenReply} key="comment-basic-reply-to">답글쓰기</span>]
-    
+                     <span onClick={onClickOpenReply} key="comment-basic-reply-to">&nbsp; 답글쓰기</span>]    
     
     //여기가 템플릿 부분이다. 화면의 구성
     return (

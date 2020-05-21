@@ -57,21 +57,21 @@ router.post("/upLikes", (req,res) => {
     let variable = {}
 
     if(req.body.videoId){
-        variable = { videoId: req.body.videoId }
+        variable = { videoId: req.body.videoId , userId: req.body.userId }
     }
     else{
-        variable = { commentId:req.body.commentId }
+        variable = { commentId:req.body.commentId , userId: req.body.userId }
     }
 
     //Like Collection 클릭 처리, 데이터 입력 처리
     const like = new Like(variable)
 
+    //Like 입력
     like.save((err, likeResult) => {
         if(err){
             return res.status(400).json({success:false, err})
         }
-
-        //만약에 DisLike가 이미 클릭된 경우 
+        //위에 과정이 성공한 이후 만약에 DisLike가 이미 클릭된 경우 
         Dislike.findOneAndDelete(variable)
             .exec((err,dislikeResult) => {
                 if(err){
@@ -83,17 +83,17 @@ router.post("/upLikes", (req,res) => {
 });
 
 //=================================
-//       unlike 처리 
+//          unlike 처리 
 //=================================
 router.post("/unLikes", (req,res) => {
 
     let variable = {}
 
     if(req.body.videoId){
-        variable = { videoId: req.body.videoId }
+        variable = { videoId: req.body.videoId , userId: req.body.userId }
     }
     else{
-        variable = { commentId:req.body.commentId }
+        variable = { commentId:req.body.commentId , userId: req.body.userId }
     }
     Like.findOneAndDelete(variable)
         .exec((err, likeResult) => {
@@ -113,10 +113,10 @@ router.post("/upDislikes", (req,res) => {
     let variable = {}
 
     if(req.body.videoId){
-        variable = { videoId: req.body.videoId }
+        variable = { videoId: req.body.videoId  , userId: req.body.userId  }
     }
     else{
-        variable = { commentId:req.body.commentId }
+        variable = { commentId:req.body.commentId  , userId: req.body.userId  }
     }
 
     //Like Collection 클릭 처리, 데이터 입력 처리
@@ -146,10 +146,10 @@ router.post("/unDislikes", (req,res) => {
     let variable = {}
 
     if(req.body.videoId){
-        variable = { videoId: req.body.videoId }
+        variable = { videoId: req.body.videoId , userId: req.body.userId }
     }
     else{
-        variable = { commentId:req.body.commentId }
+        variable = { commentId:req.body.commentId , userId: req.body.userId  }
     }
     Dislike.findOneAndDelete(variable)
         .exec((err, dislikeResult) => {
